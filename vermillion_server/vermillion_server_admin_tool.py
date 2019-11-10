@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-import os,json,time,sys
+import os,json,time,sys,hashlib
+from subprocess import Popen
 
 API_KEYS_FILE = "api_keys.json"
 
@@ -54,6 +55,15 @@ def server_handler(server_cmd):
     elif str(server_cmd) == "stop":
         cmd = ""
 
+    server_handler = Popen(cmd,stdout="PIPE",stderr="PIPE",shell=True)
+    server_handler.communicate()
+    (cmd_rc,cmd_err) = server_handler.poll()
+
+    if cmd_rc == 0:
+        return True
+    else:
+        print(str(cmd_err))
+        return False
     
 
 def generate_key():

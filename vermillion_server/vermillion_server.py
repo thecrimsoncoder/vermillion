@@ -4,6 +4,7 @@ from flask import Flask
 
 SETTINGS_FILE = "settings.json"
 MESSAGES_FILE = "messages.json"
+API_KEYS_FILE = "api_keys.json"
 
 ## CONFIG GLOBAL VALUES ##
 SERVER_PORT = ""

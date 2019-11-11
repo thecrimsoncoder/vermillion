@@ -3,11 +3,12 @@ import json,sys
 from flask import Flask
 
 SETTINGS_FILE = "settings.json"
-MESSAGES_FILE = "messages.json"
-API_KEYS_FILE = "api_keys.json"
+
 
 ## CONFIG GLOBAL VALUES ##
 SERVER_PORT = ""
+MESSAGES_FILE = ""
+API_KEYS_FILE = ""
 
 def main():
     init_settings()
@@ -18,6 +19,8 @@ def init_settings():
         
         ## OVERWRITING GLOBAL SETTINGS CONFIG ##
         globals()["SERVER_PORT"] = json_settings["SERVER_PORT"]
+        globals()["MESSAGES_FILE"] = json_settings["MESSAGES_FILE"]
+        globals()["API_KEYS_FILE"] = json_settings["API_KEYS_FILE"]
 
 
 if __name__ == "__main__":

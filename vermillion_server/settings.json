@@ -1,3 +1,5 @@
 {
-    "SERVER_PORT" : 4105
+    "SERVER_PORT" : 4105,
+    "MESSAGES_FILE" : "messages.json",
+    "API_KEYS_FILE" : "api_keys.json"
 }

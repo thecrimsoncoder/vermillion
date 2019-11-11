@@ -2,9 +2,12 @@
 import os,json,time,sys,hashlib
 from subprocess import Popen
 
-API_KEYS_FILE = "api_keys.json"
+SETTINGS_FILE = "settings.json"
+
+API_KEYS_FILE = ""
 
 def main():
+    init_settings()
     title()
     menu()
 
@@ -91,8 +94,7 @@ def server_handler(server_cmd):
         return True
     else:
         print(str(cmd_err))
-        return False
-    
+        return False   
 
 def api_key_handler(cmd):
     if cmd == "create":
@@ -110,6 +112,13 @@ def helper_list_keys():
 
     with open(globals()["API_KEYS_FILE"],"r") as api_keys:
         json.dumps(api_keys)
+
+def init_settings():
+    with open(globals()["SETTINGS_FILE"],"r") as settings_file:
+        json_settings = json.load(settings_file)
+        
+        ## OVERWRITING GLOBAL SETTINGS CONFIG ##
+        globals()["API_KEYS_FILE"] = json_settings["API_KEYS_FILE"]
 
 if __name__ == "__main__":
     main()

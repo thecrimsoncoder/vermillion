@@ -22,28 +22,56 @@ def menu():
     print("+-------------------------------------------------------+")
     print("| 1. Start the Server                                   |")
     print("| 2. Stop the Server                                    |")
-    print("| 3. Generate a Client API Key                          |")
-    print("| 4. List API Keys                                      |")
-    print("| 5. Remove an API Key                                  |")
-    print("| 6. Exit                                               |")
+    print("| 3. List API Keys                                      |")
+    print("| 4. Generate Client API Key                            |")
+    print("| 5. Activate Client API Key                            |")
+    print("| 6. Deactivate Client API Key                          |")
+    print("| 7. Remove an API Key                                  |")
+    print("| 8. Exit                                               |")
     print("+-------------------------------------------------------+")
     print("\n")
     opt = input("[OPTION]: ")
 
-    if int(opt) == 1:
-        server_handler("start")
-    elif int(opt) == 2:
-        server_handler("stop")
-    elif int(opt) == 3:
-        generate_key()
-    elif int(opt) == 4:
-        list_keys()
-    elif int(opt) == 5:
-        remove_key()
-    elif int(opt) == 6:
+    if opt == "1":
+        if server_handler("start") == True:
+            menu()
+        else:
+            print("") ## TODO
+    elif opt == "2":
+        if server_handler("stop") == True:
+            menu()
+        else:
+            print("") ## TODO
+    elif opt == "3":
+        if helper_list_api_keys() == True:
+            menu()
+        else:
+            print("") ## TODO
+    elif opt == "4":
+        if api_key_handler("create") ==  True
+            menu()
+        else:
+            print("") ## TODO
+    elif opt == "5":
+        if api_key_handler("activate") == True
+            menu()
+        else:
+            print("") ## TODO
+    elif opt == "6":
+        if api_key_handler("deactivate") == True
+            menu()
+        else:
+            print("") ## TODO
+    elif opt == "7":
+        if api_key_handler("destroy") == True
+            menu()
+        else:
+            print("") ## TODO
+    elif int(opt) == "8":
+        print("") ## TODO
         sys.exit(0)
     else:
-        print("Invalid Option")
+        print("") ## TODO
         time.sleep(2)
         menu()
 
@@ -66,14 +94,22 @@ def server_handler(server_cmd):
         return False
     
 
-def generate_key():
-    return True
+def api_key_handler(cmd):
+    if cmd == "create":
+        return True ## TODO
+    elif cmd == "activate":
+        return True ## TODO
+    elif cmd == "deactivate":
+        return True ## TODO
+    elif cmd == "destroy":
+        return True ## TODO
+    else:
+        return False
 
-def list_keys():
-    return True
+def helper_list_keys():
 
-def remove_key():
-    return True
+    with open(globals()["API_KEYS_FILE"],"r") as api_keys:
+        json.dumps(api_keys)
 
 if __name__ == "__main__":
     main()

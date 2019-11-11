@@ -7,11 +7,9 @@ SETTINGS_FILE = "settings.json"
 API_KEYS_FILE = ""
 
 def main():
-    if init_settings() == True:
-        title()
-        menu()
-    else:
-        print("") ## TODO
+    init_settings()
+    title()
+    menu()
 
 def title():
     print("    ▄   ▄███▄   █▄▄▄▄ █▀▄▀█ ▄█ █    █    ▄█ ████▄    ▄   ")

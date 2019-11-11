@@ -2,4 +2,7 @@
 from collections import deque
 
 class Rotor:
-    def __init__(self):
+    def __init__(self,offset,setting):
+        self.mapping = ""
+        self.offset = int(offset)
+        self.setting = int(setting)

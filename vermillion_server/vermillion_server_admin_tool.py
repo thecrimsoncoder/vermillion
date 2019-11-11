@@ -7,9 +7,11 @@ SETTINGS_FILE = "settings.json"
 API_KEYS_FILE = ""
 
 def main():
-    init_settings()
-    title()
-    menu()
+    if init_settings() == True:
+        title()
+        menu()
+    else:
+        print("") ## TODO
 
 def title():
     print("    ▄   ▄███▄   █▄▄▄▄ █▀▄▀█ ▄█ █    █    ▄█ ████▄    ▄   ")
@@ -19,6 +21,7 @@ def title():
     print("  █  █  ▀███▀     █      █   ▐     ▀    ▀ ▐       █  █ █ ")
     print("   █▐            ▀      ▀                         █   ██ ")
     print("   ▐                                                     ")
+    print("   Created by Sean McElhare | github.com/thecrimsoncoder ")
     print("\n")
 
 def menu():
@@ -51,26 +54,26 @@ def menu():
         else:
             print("") ## TODO
     elif opt == "4":
-        if api_key_handler("create") ==  True
+        if api_key_handler("create") ==  True:
             menu()
         else:
             print("") ## TODO
     elif opt == "5":
-        if api_key_handler("activate") == True
+        if api_key_handler("activate") == True:
             menu()
         else:
             print("") ## TODO
     elif opt == "6":
-        if api_key_handler("deactivate") == True
+        if api_key_handler("deactivate") == True:
             menu()
         else:
             print("") ## TODO
     elif opt == "7":
-        if api_key_handler("destroy") == True
+        if api_key_handler("destroy") == True:
             menu()
         else:
             print("") ## TODO
-    elif int(opt) == "8":
+    elif opt == "8":
         print("") ## TODO
         sys.exit(0)
     else:
@@ -108,10 +111,11 @@ def api_key_handler(cmd):
     else:
         return False
 
-def helper_list_keys():
+def helper_list_api_keys():
 
     with open(globals()["API_KEYS_FILE"],"r") as api_keys:
         json.dumps(api_keys)
+    return True
 
 def init_settings():
     with open(globals()["SETTINGS_FILE"],"r") as settings_file:
@@ -119,6 +123,7 @@ def init_settings():
         
         ## OVERWRITING GLOBAL SETTINGS CONFIG ##
         globals()["API_KEYS_FILE"] = json_settings["API_KEYS_FILE"]
+        return True
 
 if __name__ == "__main__":
     main()

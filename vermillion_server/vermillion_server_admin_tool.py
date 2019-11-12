@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import os,json,time,sys,hashlib
+import os,json,time,sys,hashlib,datetime
 from subprocess import Popen
 
 SETTINGS_FILE = "settings.json"
@@ -99,7 +99,30 @@ def server_handler(server_cmd):
 
 def api_key_handler(cmd):
     if cmd == "create":
-        return True ## TODO
+        system_uuid = open("/etc/machine-id","r").read()
+        encoded_key = (str(time.time())+str(system_uuid)).encode()
+        api_token = hashlib.sha256(encoded_key).hexdigest()
+
+        api_key = {
+            "api_key" : str(api_token),
+            "active" : False
+        }
+        
+        try:
+            with open(API_KEYS_FILE,"r") as api_key_database:
+                api_keys = json.loads(api_key_database.read())
+                api_keys.append(api_key)
+
+            with open(API_KEYS_FILE,"w") as api_key_database:
+                json.dump(api_keys,api_key_database, indent=4, separators=(',', ' : '))
+
+            print("[API_KEY]     " + str(api_token) + "     [API_KEY]")
+            print("[INFO] Copy this key and distribute to a client")
+            print("[INFO] This key will need to be ACTIVATED before use!")
+
+        except Exception as err:
+            print(str(err))
+
     elif cmd == "activate":
         return True ## TODO
     elif cmd == "deactivate":

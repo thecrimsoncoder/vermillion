@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 import os,json,time,sys,hashlib,datetime
-from subprocess import Popen
+from subprocess import Popen, PIPE
 
 SETTINGS_FILE = "settings.json"
 
+## GLOBALS - Defined in init_settings() ##
 API_KEYS_FILE = ""
 
 def main():
@@ -31,7 +32,8 @@ def menu():
     print("| 5. Activate Client API Key                            |")
     print("| 6. Deactivate Client API Key                          |")
     print("| 7. Remove an API Key                                  |")
-    print("| 8. Exit                                               |")
+    print("| 8. Clean up inactive API Keys (active : False)        |")
+    print("| 9. Exit                                               |")
     print("+-------------------------------------------------------+")
     print("\n")
     opt = input("[OPTION]: ")
@@ -72,6 +74,11 @@ def menu():
         else:
             print("") ## TODO
     elif opt == "8":
+        if api_key_handler("cleanup") == True:
+            menu()
+        else:
+            print("") ## TODO
+    elif opt == "9":
         print("") ## TODO
         sys.exit(0)
     else:
@@ -87,19 +94,23 @@ def server_handler(server_cmd):
     elif str(server_cmd) == "stop":
         cmd = ""
 
-    server_handler = Popen(cmd,stdout="PIPE",stderr="PIPE",shell=True)
-    server_handler.communicate()
-    (cmd_rc,cmd_err) = server_handler.poll()
+    try:
+        server_handler = Popen(cmd,stdout="PIPE",stderr="PIPE",shell=True)
+        (cmd_output,cmd_err) = server_handler.communicate()
+        cmd_rc = server_handler.poll()
 
-    if cmd_rc == 0:
-        return True
-    else:
-        print(str(cmd_err))
-        return False   
+        if cmd_rc == 0:
+            return True
+        else:
+            print(str(cmd_err))
+            return False
+    except Exception as err:
+        print(err)
+        return False
 
 def api_key_handler(cmd):
     if cmd == "create":
-        system_uuid = open("/etc/machine-id","r").read()
+        system_uuid = open("/etc/machine-id","r").read() ## Grabbing UUID of system set at install time
         encoded_key = (str(time.time())+str(system_uuid)).encode()
         api_token = hashlib.sha256(encoded_key).hexdigest()
 
@@ -107,7 +118,7 @@ def api_key_handler(cmd):
             "api_key" : str(api_token),
             "active" : False
         }
-        
+
         try:
             with open(API_KEYS_FILE,"r") as api_key_database:
                 api_keys = json.loads(api_key_database.read())
@@ -116,35 +127,66 @@ def api_key_handler(cmd):
             with open(API_KEYS_FILE,"w") as api_key_database:
                 json.dump(api_keys,api_key_database, indent=4, separators=(',', ' : '))
 
+            print("\n")
+            print("---------------------------------------------------------------------------------------------")
             print("[API_KEY]     " + str(api_token) + "     [API_KEY]")
+            print("---------------------------------------------------------------------------------------------")
             print("[INFO] Copy this key and distribute to a client")
             print("[INFO] This key will need to be ACTIVATED before use!")
+            print("\n")
+            return True
 
         except Exception as err:
-            print(str(err))
+            print(err)
+            return False
 
     elif cmd == "activate":
-        return True ## TODO
+        try:
+            return True ## TODO
+        except Exception as err:
+            print(err)
+            return False
     elif cmd == "deactivate":
-        return True ## TODO
+        try:
+            return True ## TODO
+        except Exception as err:
+            print(err)
+            return False
     elif cmd == "destroy":
-        return True ## TODO
+         try:
+            return True ## TODO
+        except Exception as err:
+            print(err)
+            return False
+    elif cmd == "cleanup":
+        try:
+            return True ## TODO
+        except Exception as err:
+            print(err)
+            return False
     else:
         return False
 
 def helper_list_api_keys():
-
-    with open(globals()["API_KEYS_FILE"],"r") as api_keys:
-        json.dumps(api_keys)
-    return True
+    try:
+        with open(globals()["API_KEYS_FILE"],"r") as api_keys:
+            json.dumps(api_keys)
+        return True
+    except Exception as err:
+        print(err)
+        return False
 
 def init_settings():
-    with open(globals()["SETTINGS_FILE"],"r") as settings_file:
-        json_settings = json.load(settings_file)
-        
-        ## OVERWRITING GLOBAL SETTINGS CONFIG ##
-        globals()["API_KEYS_FILE"] = json_settings["API_KEYS_FILE"]
-        return True
+    try:
+        with open(globals()["SETTINGS_FILE"],"r") as settings_file:
+            json_settings = json.load(settings_file)
+            
+            ## Defining GLOBALS ##
+            globals()["API_KEYS_FILE"] = json_settings["API_KEYS_FILE"]
+            return True
+    except Exception as err:
+        print(err)
+        return False
 
 if __name__ == "__main__":
     main()

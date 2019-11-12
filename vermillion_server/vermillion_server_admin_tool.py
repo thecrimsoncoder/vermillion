@@ -89,10 +89,10 @@ def menu():
 def server_handler(server_cmd):
 
     if str(server_cmd) == "start":
-        cmd = ""
+        cmd = "" ## TODO
 
     elif str(server_cmd) == "stop":
-        cmd = ""
+        cmd = "" ## TODO
 
     try:
         server_handler = Popen(cmd,stdout="PIPE",stderr="PIPE",shell=True)
@@ -100,6 +100,7 @@ def server_handler(server_cmd):
         cmd_rc = server_handler.poll()
 
         if cmd_rc == 0:
+            print("[INFO] " + str(cmd_output))
             return True
         else:
             print(str(cmd_err))
@@ -153,7 +154,7 @@ def api_key_handler(cmd):
             print(err)
             return False
     elif cmd == "destroy":
-         try:
+        try:
             return True ## TODO
         except Exception as err:
             print(err)

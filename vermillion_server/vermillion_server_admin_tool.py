@@ -125,6 +125,7 @@ def api_key_handler(cmd):
         except Exception as err:
             print(err)
             return False
+            
     elif cmd == "create":
         try:
             with open("/etc/machine-id","r") as file_handler:
@@ -175,7 +176,6 @@ def api_key_handler(cmd):
                     print("Active: " + str(api_key['active']))
                     print("---------------------------------------------------------------------------------------------")
                 activate_key = input("Paste the key you would like to activate: ")
-                print("[DEBUG] " + str(activate_key) + " | " + str(len(activate_key)))
                 if len(activate_key) == 64 and helper_search_for_key(str(activate_key)) == True:
                     for api_key in api_keys:
                         if api_key['api_key'] == str(activate_key):
@@ -191,6 +191,7 @@ def api_key_handler(cmd):
         except Exception as err:
             print(err)
             return False
+
     elif cmd == "deactivate":
         try:
             with open(API_KEYS_FILE, "r") as api_key_database:
@@ -203,7 +204,6 @@ def api_key_handler(cmd):
                     print("Active: " + str(api_key['active']))
                     print("---------------------------------------------------------------------------------------------")
                 deactivate_key = input("Paste the key you would like to deactivate: ")
-                print("[DEBUG] " + str(deactivate_key) + " | " + str(len(deactivate_key)))
                 if len(deactivate_key) == 64 and helper_search_for_key(str(deactivate_key)) == True:
                     for api_key in api_keys:
                         if api_key['api_key'] == str(activate_key):
@@ -219,6 +219,7 @@ def api_key_handler(cmd):
         except Exception as err:
             print(err)
             return False
+
     elif cmd == "destroy":
         try:
             with open(API_KEYS_FILE, "r") as api_key_database:
@@ -231,7 +232,6 @@ def api_key_handler(cmd):
                     print("Active: " + str(api_key['active']))
                     print("---------------------------------------------------------------------------------------------")
                 destroy_key = input("Paste the key you would like to remove: ")
-                print("[DEBUG] " + str(destroy_key) + " | " + str(len(destroy_key)))
                 if len(destroy_key) == 64 and helper_search_for_key(str(destroy_key)) == True:
                     for api_key in api_keys:
                         if api_key['api_key'] == str(destroy_key):
@@ -247,13 +247,13 @@ def api_key_handler(cmd):
         except Exception as err:
             print(err)
             return False
+
     elif cmd == "cleanup":
         active_keys = []
         try:
             with open(API_KEYS_FILE, "r") as api_key_database:
                 api_keys = json.load(api_key_database)
                 api_key_database.close()
-                print(str(type(api_keys)))
                 for api_key in api_keys:
                     if api_key['active'] == True:
                         active_keys.append(api_key)
@@ -266,25 +266,22 @@ def api_key_handler(cmd):
             return False
     else:
         return False
+
 def helper_search_for_key(search_key):
     try:
-        print("[DEBUG] Searching For: " + str(search_key))
         key_found = False
         with open(API_KEYS_FILE,"r") as api_key_database:
             api_keys = json.load(api_key_database)
             api_key_database.close()
             for api_key in api_keys:
-                print(api_key)
-                print("[DEBUG] Checking: " + api_key['api_key'] + " = " + str(search_key))
                 if api_key['api_key'] == str(search_key):
-                    print("[DEBUG] KEY FOUND!")
                     key_found = True
                     break
-        print("[DEBUG] key_found = " + str(key_found))
         return key_found
     except Exception as err:
         print(err)
         return False
+
 def init_settings():
     try:
         with open(globals()["SETTINGS_FILE"],"r") as settings_file:

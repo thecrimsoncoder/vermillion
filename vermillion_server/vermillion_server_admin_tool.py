@@ -112,11 +112,9 @@ def server_handler(server_cmd):
 def api_key_handler(cmd):
     if cmd == "create":
         try:
-            with open("/etc/machine-id","r").read() as file_handler:
-                system_uuid = str(file_handler) ## Grabbing UUID of system set at install time
+            with open("/etc/machine-id","r") as file_handler:
+                system_uuid = file_handler.read() ## Grabbing UUID of system set at install time
                 file_handler.close()
-
-            print(system_uuid)
 
             encoded_key = (str(time.time())+str(system_uuid)).encode()
             api_token = hashlib.sha256(encoded_key).hexdigest()
@@ -129,7 +127,7 @@ def api_key_handler(cmd):
             }
 
             with open(API_KEYS_FILE,"r") as api_key_database:
-                api_keys = json.loads(api_key_database)
+                api_keys = json.load(api_key_database)
                 api_key_database.close()
                 api_keys.append(api_key)
 

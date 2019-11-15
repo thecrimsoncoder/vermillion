@@ -111,22 +111,31 @@ def server_handler(server_cmd):
 
 def api_key_handler(cmd):
     if cmd == "create":
-        system_uuid = open("/etc/machine-id","r").read() ## Grabbing UUID of system set at install time
-        encoded_key = (str(time.time())+str(system_uuid)).encode()
-        api_token = hashlib.sha256(encoded_key).hexdigest()
-
-        api_key = {
-            "api_key" : str(api_token),
-            "active" : False
-        }
-
         try:
+            with open("/etc/machine-id","r").read() as file_handler:
+                system_uuid = str(file_handler) ## Grabbing UUID of system set at install time
+                file_handler.close()
+
+            print(system_uuid)
+
+            encoded_key = (str(time.time())+str(system_uuid)).encode()
+            api_token = hashlib.sha256(encoded_key).hexdigest()
+            api_token_description = input("API KEY DESCRIPTION: ")
+
+            api_key = {
+                "api_key" : str(api_token),
+                "active" : False,
+                "description" : str(api_token_description)
+            }
+
             with open(API_KEYS_FILE,"r") as api_key_database:
-                api_keys = json.loads(api_key_database.read())
+                api_keys = json.loads(api_key_database)
+                api_key_database.close()
                 api_keys.append(api_key)
 
             with open(API_KEYS_FILE,"w") as api_key_database:
                 json.dump(api_keys,api_key_database, indent=4, separators=(',', ' : '))
+                api_key_database.close()
 
             print("\n")
             print("---------------------------------------------------------------------------------------------")
@@ -143,13 +152,57 @@ def api_key_handler(cmd):
 
     elif cmd == "activate":
         try:
-            return True ## TODO
+            with open(API_KEYS_FILE, "r") as api_key_database:
+                api_keys = json.load(api_key_database)
+                api_key_database.close()
+                print("---------------------------------------------------------------------------------------------")
+                for api_key in api_keys:
+                    print("Key: " + str(api_key['api_key']))
+                    print("Description: " + str(api_key['description']))
+                    print("Active: " + str(api_key['active']))
+                    print("---------------------------------------------------------------------------------------------")
+                activate_key = input("Paste the key you would like to activate: ")
+                print("[DEBUG] " + str(activate_key) + " | " + str(len(activate_key)))
+                if len(activate_key) == 64 and helper_search_for_key(str(activate_key)) == True:
+                    for api_key in api_keys:
+                        if api_key['api_key'] == str(activate_key):
+                            api_key['active'] =  True
+                            break
+                    with open(API_KEYS_FILE, "w") as api_key_database:
+                        json.dump(api_keys,api_key_database, indent=4, separators=(',', ' : '))
+                        api_key_database.close()
+                else:
+                    print("Please enter a valid api key...")
+                    time.sleep(2)
+            return True
         except Exception as err:
             print(err)
             return False
     elif cmd == "deactivate":
         try:
-            return True ## TODO
+            with open(API_KEYS_FILE, "r") as api_key_database:
+                api_keys = json.load(api_key_database)
+                api_key_database.close()
+                print("---------------------------------------------------------------------------------------------")
+                for api_key in api_keys:
+                    print("Key: " + str(api_key['api_key']))
+                    print("Description: " + str(api_key['description']))
+                    print("Active: " + str(api_key['active']))
+                    print("---------------------------------------------------------------------------------------------")
+                activate_key = input("Paste the key you would like to deactivate: ")
+                print("[DEBUG] " + str(activate_key) + " | " + str(len(activate_key)))
+                if len(activate_key) == 64 and helper_search_for_key(str(activate_key)) == True:
+                    for api_key in api_keys:
+                        if api_key['api_key'] == str(activate_key):
+                            api_key['active'] =  False
+                            break
+                    with open(API_KEYS_FILE, "w") as api_key_database:
+                        json.dump(api_keys,api_key_database, indent=4, separators=(',', ' : '))
+                        api_key_database.close()
+                else:
+                    print("Please enter a valid api key...")
+                    time.sleep(2)
+            return True
         except Exception as err:
             print(err)
             return False
@@ -167,16 +220,25 @@ def api_key_handler(cmd):
             return False
     else:
         return False
-
-def helper_list_api_keys():
+def helper_search_for_key(search_key):
     try:
-        with open(globals()["API_KEYS_FILE"],"r") as api_keys:
-            json.dumps(api_keys)
-        return True
+        print("[DEBUG] Searching For: " + str(search_key))
+        key_found = False
+        with open(API_KEYS_FILE,"r") as api_key_database:
+            api_keys = json.load(api_key_database)
+            api_key_database.close()
+            for api_key in api_keys:
+                print(api_key)
+                print("[DEBUG] Checking: " + api_key['api_key'] + " = " + str(search_key))
+                if api_key['api_key'] == str(search_key):
+                    print("[DEBUG] KEY FOUND!")
+                    key_found = True
+                    break
+        print("[DEBUG] key_found = " + str(key_found))
+        return key_found
     except Exception as err:
         print(err)
         return False
-
 def init_settings():
     try:
         with open(globals()["SETTINGS_FILE"],"r") as settings_file:

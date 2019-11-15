@@ -49,7 +49,7 @@ def menu():
         else:
             print("") ## TODO
     elif opt == "3":
-        if helper_list_api_keys() == True:
+        if api_key_handler("list") == True:
             menu()
         else:
             print("") ## TODO
@@ -110,7 +110,22 @@ def server_handler(server_cmd):
         return False
 
 def api_key_handler(cmd):
-    if cmd == "create":
+    if cmd == "list":
+        try:
+            with open(API_KEYS_FILE, "r") as api_key_database:
+                api_keys = json.load(api_key_database)
+                api_key_database.close()
+                print("---------------------------------------------------------------------------------------------")
+                for api_key in api_keys:
+                    print("Key: " + str(api_key['api_key']))
+                    print("Description: " + str(api_key['description']))
+                    print("Active: " + str(api_key['active']))
+                    print("---------------------------------------------------------------------------------------------")
+            return True
+        except Exception as err:
+            print(err)
+            return False
+    elif cmd == "create":
         try:
             with open("/etc/machine-id","r") as file_handler:
                 system_uuid = file_handler.read() ## Grabbing UUID of system set at install time
@@ -187,9 +202,9 @@ def api_key_handler(cmd):
                     print("Description: " + str(api_key['description']))
                     print("Active: " + str(api_key['active']))
                     print("---------------------------------------------------------------------------------------------")
-                activate_key = input("Paste the key you would like to deactivate: ")
-                print("[DEBUG] " + str(activate_key) + " | " + str(len(activate_key)))
-                if len(activate_key) == 64 and helper_search_for_key(str(activate_key)) == True:
+                deactivate_key = input("Paste the key you would like to deactivate: ")
+                print("[DEBUG] " + str(deactivate_key) + " | " + str(len(deactivate_key)))
+                if len(deactivate_key) == 64 and helper_search_for_key(str(deactivate_key)) == True:
                     for api_key in api_keys:
                         if api_key['api_key'] == str(activate_key):
                             api_key['active'] =  False
@@ -206,6 +221,28 @@ def api_key_handler(cmd):
             return False
     elif cmd == "destroy":
         try:
+            with open(API_KEYS_FILE, "r") as api_key_database:
+                api_keys = json.load(api_key_database)
+                api_key_database.close()
+                print("---------------------------------------------------------------------------------------------")
+                for api_key in api_keys:
+                    print("Key: " + str(api_key['api_key']))
+                    print("Description: " + str(api_key['description']))
+                    print("Active: " + str(api_key['active']))
+                    print("---------------------------------------------------------------------------------------------")
+                destroy_key = input("Paste the key you would like to remove: ")
+                print("[DEBUG] " + str(destroy_key) + " | " + str(len(destroy_key)))
+                if len(destroy_key) == 64 and helper_search_for_key(str(destroy_key)) == True:
+                    for api_key in api_keys:
+                        if api_key['api_key'] == str(destroy_key):
+                            api_keys.remove(api_key)
+                            break
+                    with open(API_KEYS_FILE, "w") as api_key_database:
+                        json.dump(api_keys,api_key_database, indent=4, separators=(',', ' : '))
+                        api_key_database.close()
+                else:
+                    print("Please enter a valid api key...")
+                    time.sleep(2)
             return True ## TODO
         except Exception as err:
             print(err)

@@ -243,13 +243,24 @@ def api_key_handler(cmd):
                 else:
                     print("Please enter a valid api key...")
                     time.sleep(2)
-            return True ## TODO
+            return True
         except Exception as err:
             print(err)
             return False
     elif cmd == "cleanup":
+        active_keys = []
         try:
-            return True ## TODO
+            with open(API_KEYS_FILE, "r") as api_key_database:
+                api_keys = json.load(api_key_database)
+                api_key_database.close()
+                print(str(type(api_keys)))
+                for api_key in api_keys:
+                    if api_key['active'] == True:
+                        active_keys.append(api_key)
+            with open(API_KEYS_FILE, "w") as api_key_database:
+                json.dump(active_keys,api_key_database, indent=4, separators=(',', ' : '))
+                api_key_database.close()
+            return True
         except Exception as err:
             print(err)
             return False

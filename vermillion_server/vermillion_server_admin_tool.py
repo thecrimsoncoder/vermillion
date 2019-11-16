@@ -143,29 +143,35 @@ def api_key_handler(cmd):
             api_token = hashlib.sha256(encoded_key).hexdigest()
             api_token_description = input("API KEY DESCRIPTION: ")
 
-            api_key = {
-                "api_key" : str(api_token),
-                "active" : False,
-                "description" : str(api_token_description)
-            }
+            if len(api_token) == 64 and api_token_description != "":
+                api_key = {
+                    "api_key" : str(api_token),
+                    "active" : False,
+                    "description" : str(api_token_description)
+                }
 
-            with open(API_KEYS_FILE,"r") as api_key_database:
-                api_keys = json.load(api_key_database)
-                api_key_database.close()
-                api_keys.append(api_key)
+                with open(API_KEYS_FILE,"r") as api_key_database:
+                    api_keys = json.load(api_key_database)
+                    api_key_database.close()
+                    api_keys.append(api_key)
 
-            with open(API_KEYS_FILE,"w") as api_key_database:
-                json.dump(api_keys,api_key_database, indent=4, separators=(',', ' : '))
-                api_key_database.close()
+                with open(API_KEYS_FILE,"w") as api_key_database:
+                    json.dump(api_keys,api_key_database, indent=4, separators=(',', ' : '))
+                    api_key_database.close()
 
-            print("\n")
-            print("---------------------------------------------------------------------------------------------")
-            print("[API_KEY]     " + str(api_token) + "     [API_KEY]")
-            print("---------------------------------------------------------------------------------------------")
-            print("[INFO] Copy this key and distribute to a client")
-            print("[INFO] This key will need to be ACTIVATED before use!")
-            print("\n")
-            return True
+                print("\n")
+                print("---------------------------------------------------------------------------------------------")
+                print("[API_KEY]     " + str(api_token) + "     [API_KEY]")
+                print("---------------------------------------------------------------------------------------------")
+                print("[INFO] Copy this key and distribute to a client")
+                print("[INFO] This key will need to be ACTIVATED before use!")
+                print("\n")
+                return True
+            
+            else:
+                print("[INFO] Please enter a description")
+                time.sleep(2)
+                api_key_handler("create")
 
         except Exception as err:
             print(err)
@@ -191,10 +197,12 @@ def api_key_handler(cmd):
                     with open(API_KEYS_FILE, "w") as api_key_database:
                         json.dump(api_keys,api_key_database, indent=4, separators=(',', ' : '))
                         api_key_database.close()
+                    return True
                 else:
                     print("Please enter a valid api key...")
                     time.sleep(2)
-            return True
+                    api_key_handler("activate")
+
         except Exception as err:
             print(err)
             return False
@@ -219,10 +227,14 @@ def api_key_handler(cmd):
                     with open(API_KEYS_FILE, "w") as api_key_database:
                         json.dump(api_keys,api_key_database, indent=4, separators=(',', ' : '))
                         api_key_database.close()
+
+                    return True
+
                 else:
                     print("Please enter a valid api key...")
                     time.sleep(2)
-            return True
+                    api_key_handler("deactivate")
+
         except Exception as err:
             print(err)
             return False
@@ -247,10 +259,13 @@ def api_key_handler(cmd):
                     with open(API_KEYS_FILE, "w") as api_key_database:
                         json.dump(api_keys,api_key_database, indent=4, separators=(',', ' : '))
                         api_key_database.close()
+
+                    return True
                 else:
                     print("Please enter a valid api key...")
                     time.sleep(2)
-            return True
+                    api_key_handler("destroy")
+                    
         except Exception as err:
             print(err)
             return False

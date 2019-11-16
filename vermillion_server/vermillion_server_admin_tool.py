@@ -6,6 +6,7 @@ SETTINGS_FILE = "settings.json"
 
 ## GLOBALS - Defined in init_settings() ##
 API_KEYS_FILE = ""
+MESSAGES_FILE = ""
 
 def main():
     init_settings()
@@ -33,7 +34,8 @@ def menu():
     print("| 6. Deactivate Client API Key                          |")
     print("| 7. Remove an API Key                                  |")
     print("| 8. Clean up inactive API Keys (active : False)        |")
-    print("| 9. Exit                                               |")
+    print("| 9. Wipe Messages Database                             |")
+    print("| 10. Exit                                              |")
     print("+-------------------------------------------------------+")
     print("\n")
     opt = input("[OPTION]: ")
@@ -79,6 +81,11 @@ def menu():
         else:
             print("") ## TODO
     elif opt == "9":
+        if wipe_messages() == True:
+            menu()
+        else:
+            print("") ## TODO
+    elif opt == "10":
         print("") ## TODO
         sys.exit(0)
     else:
@@ -125,7 +132,7 @@ def api_key_handler(cmd):
         except Exception as err:
             print(err)
             return False
-            
+
     elif cmd == "create":
         try:
             with open("/etc/machine-id","r") as file_handler:
@@ -282,6 +289,13 @@ def helper_search_for_key(search_key):
         print(err)
         return False
 
+def wipe_messages():
+    try:
+        return True
+    except Exception as err:
+        print(err)
+        return False
+
 def init_settings():
     try:
         with open(globals()["SETTINGS_FILE"],"r") as settings_file:
@@ -289,6 +303,7 @@ def init_settings():
             
             ## Defining GLOBALS ##
             globals()["API_KEYS_FILE"] = json_settings["API_KEYS_FILE"]
+            globals()["MESSAGES_FILE"] = json_settings["MESSAGES_FILE"]
             return True
     except Exception as err:
         print(err)
